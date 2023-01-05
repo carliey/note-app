@@ -36,12 +36,15 @@ export type NoteData = {
   tags: Tag[];
 };
 
+export type RawNote = {};
+
 export type Tag = {
   id: string;
   label: string;
 };
 
 function App() {
+  const [notes, setNotes] = useLocalStorage<RawNote[]>("notes", []);
   return (
     <Container maxWidth="lg">
       <RouterProvider router={router} />;
