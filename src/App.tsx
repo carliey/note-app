@@ -11,6 +11,7 @@ import {
 import Home from "./pages/Home";
 import Create from "./pages/Create";
 import ViewNote from "./pages/ViewNote";
+import Container from "@mui/material/Container";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -25,8 +26,27 @@ const router = createBrowserRouter(
   )
 );
 
+export type Note = {
+  id: string;
+} & NoteData;
+
+export type NoteData = {
+  title: string;
+  markdown: string;
+  tags: Tag[];
+};
+
+export type Tag = {
+  id: string;
+  label: string;
+};
+
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <Container maxWidth="lg">
+      <RouterProvider router={router} />;
+    </Container>
+  );
 }
 
 export default App;
