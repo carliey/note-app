@@ -1,11 +1,16 @@
 import React from "react";
 import NoteEditor from "../components/NoteEditor";
+import { NoteData } from "../App";
 
-const Create = () => {
+type NewNoteProps = {
+  onSubmit: (data: NoteData) => void;
+};
+
+const Create = ({ onSubmit }: NewNoteProps) => {
   return (
     <div>
       <h1>Create note</h1>
-      <NoteEditor />
+      <NoteEditor onSubmit={onSubmit} />
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import reactLogo from "./assets/react.svg";
 import "./App.css";
 
@@ -12,19 +12,7 @@ import Home from "./pages/Home";
 import Create from "./pages/Create";
 import ViewNote from "./pages/ViewNote";
 import Container from "@mui/material/Container";
-
-const router = createBrowserRouter(
-  createRoutesFromElements(
-    <Route>
-      <Route path="/" element={<Home />} />
-      <Route path="/create" element={<Create />} />
-      <Route path="/:id">
-        <Route index element={<ViewNote />} />
-        <Route path="edit" element={<h1>edit</h1>} />
-      </Route>
-    </Route>
-  )
-);
+import { useLocalStorage } from "./hooks/useLocalStorage";
 
 export type Note = {
   id: string;
@@ -36,7 +24,15 @@ export type NoteData = {
   tags: Tag[];
 };
 
-export type RawNote = {};
+export type RawNote = {
+  id: string;
+} & RawNoteData;
+
+export type RawNoteData = {
+  title: string;
+  markdown: string;
+  tagsIds: string[];
+};
 
 export type Tag = {
   id: string;
@@ -44,7 +40,42 @@ export type Tag = {
 };
 
 function App() {
-  const [notes, setNotes] = useLocalStorage<RawNote[]>("notes", []);
+  const [notes, setNotes] = useLocalStorage<RawNote[]>("NOTES", []);
+  const [tags, setTags] = useLocalStorage<Tag[]>("TAGS", []);
+
+  const notesWithTags = useMemo(
+    () =>
+      notes.map((note) => ({
+        ...note,
+        tags: tags.filter((tag) => note.tagsIds.includes(tag.id)),
+      })),
+    [notes, tags]
+  );
+
+  const onCreateNote = ({ tags, ...data }: NoteData) => {
+    setNotes((prev) => [
+      ...prev,
+      {
+        ...data,
+        id: Math.random.toString(),
+        tagsIds: tags.map((tag) => tag.id),
+      },
+    ]);
+  };
+
+  const router = createBrowserRouter(
+    createRoutesFromElements(
+      <Route>
+        <Route path="/" element={<Home />} />
+        <Route path="/create" element={<Create onSubmit={onCreateNote} />} />
+        <Route path="/:id">
+          <Route index element={<ViewNote />} />
+          <Route path="edit" element={<h1>edit</h1>} />
+        </Route>
+      </Route>
+    )
+  );
+
   return (
     <Container maxWidth="lg">
       <RouterProvider router={router} />;
