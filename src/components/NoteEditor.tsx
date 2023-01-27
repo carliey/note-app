@@ -6,9 +6,11 @@ import { NoteData, Tag } from "../App";
 
 type Props = {
   onSubmit: (data: NoteData) => void;
+  onAddTag: (tag: Tag) => void;
+  availableTags: Tag[];
 };
 
-const NoteEditor = ({ onSubmit }: Props) => {
+const NoteEditor = ({ onSubmit, onAddTag, availableTags }: Props) => {
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
@@ -44,6 +46,15 @@ const NoteEditor = ({ onSubmit }: Props) => {
         <Typography>Tags</Typography>
         <CreatableReactSelect
           isMulti
+          onCreateOption={(label) => {
+            const newTag = { id: Math.random().toString(), label };
+            onAddTag(newTag);
+            setSelectedTags((prev) => [...prev, newTag]);
+          }}
+          options={availableTags.map((tag) => ({
+            label: tag.label,
+            value: tag.id,
+          }))}
           value={selectedTags.map((t) => ({ label: t.label, value: t.id }))}
           onChange={(tags) => {
             setSelectedTags(tags.map((t) => ({ label: t.label, id: t.value })));

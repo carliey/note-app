@@ -7,8 +7,10 @@ import {
   createRoutesFromElements,
   RouterProvider,
   Route,
+  useNavigate,
+  Routes,
 } from "react-router-dom";
-import Home from "./pages/Home";
+import NoteList from "./pages/NoteList";
 import Create from "./pages/Create";
 import ViewNote from "./pages/ViewNote";
 import Container from "@mui/material/Container";
@@ -40,6 +42,7 @@ export type Tag = {
 };
 
 function App() {
+  const navigate = useNavigate();
   const [notes, setNotes] = useLocalStorage<RawNote[]>("NOTES", []);
   const [tags, setTags] = useLocalStorage<Tag[]>("TAGS", []);
 
@@ -57,28 +60,38 @@ function App() {
       ...prev,
       {
         ...data,
-        id: Math.random.toString(),
+        id: Math.random().toString(),
         tagsIds: tags.map((tag) => tag.id),
       },
     ]);
+    navigate("..");
   };
 
-  const router = createBrowserRouter(
-    createRoutesFromElements(
-      <Route>
-        <Route path="/" element={<Home />} />
-        <Route path="/create" element={<Create onSubmit={onCreateNote} />} />
-        <Route path="/:id">
-          <Route index element={<ViewNote />} />
-          <Route path="edit" element={<h1>edit</h1>} />
-        </Route>
-      </Route>
-    )
-  );
+  const onAddTag = (data: Tag) => {
+    setTags((prev) => [...prev, data]);
+  };
 
   return (
     <Container maxWidth="lg">
-      <RouterProvider router={router} />;
+      <Routes>
+        <Route>
+          <Route path="/" element={<NoteList availableTags={tags} />} />
+          <Route
+            path="/create"
+            element={
+              <Create
+                onAddTag={onAddTag}
+                availableTags={tags}
+                onSubmit={onCreateNote}
+              />
+            }
+          />
+          <Route path="/:id">
+            <Route index element={<ViewNote />} />
+            <Route path="edit" element={<h1>edit</h1>} />
+          </Route>
+        </Route>
+      </Routes>
     </Container>
   );
 }

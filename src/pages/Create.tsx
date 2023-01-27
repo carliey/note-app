@@ -1,16 +1,22 @@
 import React from "react";
 import NoteEditor from "../components/NoteEditor";
-import { NoteData } from "../App";
+import { NoteData, Tag } from "../App";
 
 type NewNoteProps = {
   onSubmit: (data: NoteData) => void;
+  onAddTag: (tag: Tag) => void;
+  availableTags: Tag[];
 };
 
-const Create = ({ onSubmit }: NewNoteProps) => {
+const Create = ({ onSubmit, onAddTag, availableTags }: NewNoteProps) => {
   return (
     <div>
       <h1>Create note</h1>
-      <NoteEditor onSubmit={onSubmit} />
+      <NoteEditor
+        availableTags={availableTags}
+        onAddTag={onAddTag}
+        onSubmit={onSubmit}
+      />
     </div>
   );
 };
