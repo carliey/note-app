@@ -15,6 +15,7 @@ import Create from "./pages/Create";
 import ViewNote from "./pages/ViewNote";
 import Container from "@mui/material/Container";
 import { useLocalStorage } from "./hooks/useLocalStorage";
+import NoteLayout from "./layout/NoteLayout";
 
 export type Note = {
   id: string;
@@ -28,6 +29,7 @@ export type NoteData = {
 
 export type RawNote = {
   id: string;
+  tags?: Tag[];
 } & RawNoteData;
 
 export type RawNoteData = {
@@ -75,7 +77,10 @@ function App() {
     <Container maxWidth="lg">
       <Routes>
         <Route>
-          <Route path="/" element={<NoteList availableTags={tags} />} />
+          <Route
+            path="/"
+            element={<NoteList notes={notesWithTags} availableTags={tags} />}
+          />
           <Route
             path="/create"
             element={
@@ -86,7 +91,7 @@ function App() {
               />
             }
           />
-          <Route path="/:id">
+          <Route path="/:id" element={<NoteLayout notes={notesWithTags} />}>
             <Route index element={<ViewNote />} />
             <Route path="edit" element={<h1>edit</h1>} />
           </Route>
