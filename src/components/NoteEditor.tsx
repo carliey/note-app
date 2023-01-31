@@ -2,19 +2,26 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Grid, TextField, Typography, Stack, Button } from "@mui/material";
 import CreatableReactSelect from "react-select/creatable";
-import { NoteData, Tag } from "../App";
+import { Note, NoteData, Tag } from "../App";
 
 type Props = {
   onSubmit: (data: NoteData) => void;
   onAddTag: (tag: Tag) => void;
   availableTags: Tag[];
-};
+} & Partial<NoteData>;
 
-const NoteEditor = ({ onSubmit, onAddTag, availableTags }: Props) => {
+const NoteEditor = ({
+  onSubmit,
+  onAddTag,
+  availableTags,
+  title: defaultTitle,
+  markdown: defaultMarkdown,
+  tags: defaultTags,
+}: Props) => {
   const navigate = useNavigate();
-  const [title, setTitle] = useState("");
-  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
-  const [markdown, setMarkdown] = useState("");
+  const [title, setTitle] = useState(defaultTitle || "");
+  const [selectedTags, setSelectedTags] = useState<Tag[]>(defaultTags || []);
+  const [markdown, setMarkdown] = useState(defaultMarkdown || "");
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

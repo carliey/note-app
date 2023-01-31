@@ -7,7 +7,11 @@ import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 
-const ViewNote = () => {
+type ViewNoteProps = {
+  onDeleteNote: (id: string) => void;
+};
+
+const ViewNote = ({ onDeleteNote }: ViewNoteProps) => {
   const note = useNote();
 
   return (
@@ -29,7 +33,12 @@ const ViewNote = () => {
               Edit
             </Button>
           </Link>
-          <Button color="error" size="small" variant="outlined">
+          <Button
+            color="error"
+            size="small"
+            variant="outlined"
+            onClick={() => onDeleteNote(note.id)}
+          >
             Delete
           </Button>
           <Link to="..">

@@ -16,6 +16,7 @@ import ViewNote from "./pages/ViewNote";
 import Container from "@mui/material/Container";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 import NoteLayout from "./layout/NoteLayout";
+import EditNote from "./pages/EditNote";
 
 export type Note = {
   id: string;
@@ -73,6 +74,28 @@ function App() {
     setTags((prev) => [...prev, data]);
   };
 
+  const onUpdateNote = (id: string, { tags, ...data }: NoteData) => {
+    setNotes((prev) =>
+      prev.map((note) => {
+        if (note.id === id) {
+          return {
+            ...note,
+            ...data,
+            tagsIds: tags.map((tag) => tag.id),
+          };
+        } else {
+          return note;
+        }
+      })
+    );
+    navigate("..");
+  };
+
+  const onDeleteNote = (id: string) => {
+    setNotes((prev) => prev.filter((note) => note.id !== id));
+    navigate("..");
+  };
+
   return (
     <Container maxWidth="lg">
       <Routes>
@@ -92,8 +115,17 @@ function App() {
             }
           />
           <Route path="/:id" element={<NoteLayout notes={notesWithTags} />}>
-            <Route index element={<ViewNote />} />
-            <Route path="edit" element={<h1>edit</h1>} />
+            <Route index element={<ViewNote onDeleteNote={onDeleteNote} />} />
+            <Route
+              path="edit"
+              element={
+                <EditNote
+                  onSubmit={onUpdateNote}
+                  availableTags={tags}
+                  onAddTag={onAddTag}
+                />
+              }
+            />
           </Route>
         </Route>
       </Routes>
